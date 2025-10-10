@@ -1,0 +1,24 @@
+services:
+  nginx:
+    image: debian:stable
+    build:
+      context: ./mandatory/nginx/
+      dockerfile: Dockerfile
+    volumes:
+      - ./:/var/run
+    ports:
+      - "443:4433"
+    configs:
+      - httpd-config
+      - nginx-config
+    secrets:
+      - server-cert
+    restart: on-failure
+
+  db:
+    image: debian:stable
+    ports:
+      - "3306:3306"
+    configs:
+      - mariadb-config
+    restart: on-failure
