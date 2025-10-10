@@ -17,6 +17,9 @@ services:
 
   db:
     image: debian:stable
+    build:
+      context: ./mandatory/maria_db/
+      dockerfile: Dockerfile
     ports:
       - "3306:3306"
     configs:
