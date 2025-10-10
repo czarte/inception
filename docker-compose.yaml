@@ -1,27 +1,23 @@
 services:
   nginx:
-    image: debian:stable
     build:
-      context: ./mandatory/nginx/
-      dockerfile: Dockerfile
+      dockerfile: ./mandatory/nginx/Dockerfile
     volumes:
       - ./:/var/run
+    networks:
+      - inception-net
     ports:
-      - "443:4433"
-#    configs:
-#      - httpd-config
-#      - nginx-config
-    secrets:
-      - server-cert
+      - "4443:443"
     restart: on-failure
 
   db:
-    image: debian:stable
+    networks:
+      - inception-net
     build:
-      context: ./mandatory/maria_db/
-      dockerfile: Dockerfile
+      dockerfile: ./mandatory/maria_db/Dockerfile
     ports:
       - "3306:3306"
-#    configs:
-#      - mariadb-config
     restart: on-failure
+
+networks:
+  inception-net: {}
