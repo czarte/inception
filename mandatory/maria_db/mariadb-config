@@ -1,0 +1,57 @@
+[mysqld]
+# Basic settings
+user = mysql
+pid-file = /run/mysqld/mysqld.pid
+socket = /run/mysqld/mysqld.sock
+basedir = /usr
+datadir = /var/lib/mysql
+tmpdir = /tmp
+lc-messages-dir = /usr/share/mysql
+
+# Network settings
+bind-address = 0.0.0.0
+port = 3306
+skip-networking = 0
+
+# Character set and collation
+character-set-server = utf8mb4
+collation-server = utf8mb4_general_ci
+
+# InnoDB settings
+default-storage-engine = InnoDB
+innodb_buffer_pool_size = 256M
+innodb_log_file_size = 64M
+innodb_flush_log_at_trx_commit = 1
+innodb_flush_method = O_DIRECT
+
+# Query cache (disabled in MariaDB 10.5+, but kept for compatibility)
+query_cache_type = 0
+query_cache_size = 0
+
+# Connection settings
+max_connections = 100
+max_allowed_packet = 64M
+thread_cache_size = 8
+table_open_cache = 2000
+
+# Logging
+log_error = /var/log/mysql/error.log
+general_log = 0
+slow_query_log = 0
+
+# Security settings
+symbolic-links = 0
+local-infile = 0
+
+[client]
+port = 3306
+socket = /run/mysqld/mysqld.sock
+default-character-set = utf8mb4
+
+[mysql]
+default-character-set = utf8mb4
+
+[mysqldump]
+quick
+quote-names
+max_allowed_packet = 64M

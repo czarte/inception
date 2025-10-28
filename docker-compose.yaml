@@ -6,6 +6,9 @@ services:
       - ./:/var/run
     networks:
       - inception-net
+    configs:
+      - http_config
+      - nginx_config
     ports:
       - "4443:443"
     restart: on-failure
@@ -17,7 +20,38 @@ services:
       dockerfile: ./mandatory/maria_db/Dockerfile
     ports:
       - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-rootpassword}
+      MYSQL_DATABASE: ${DB_NAME:-wordpress}
+      MYSQL_USER: ${DB_USER:-wpuser}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-wppassword}
+    volumes:
+      - ./mariadb_data:/var/lib/mysql
+    configs:
+      - mariadb_config
     restart: on-failure
+
+  wp:
+    networks:
+      - inception-net
+    build:
+      dockerfile: ./mandatory/wp/Dockerfile
+    ports:
+      - "9000:9000"
+    volumes:
+      - ./wp_data:/var/www/html
+
+configs:
+  http_config:
+    file: ./mandatory/nginx/httpd-config
+  nginx_config:
+    file: ./mandatory/nginx/nginx-config
+  mariadb_config:
+    file: ./mandatory/maria_db/mariadb-config
+
+volumes:
+  mariadb_data:
+    driver: local
 
 networks:
   inception-net: {}
