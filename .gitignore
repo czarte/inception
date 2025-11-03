@@ -1,1 +1,5 @@
 .idea/
+.env
+mariadb_data
+nginx_data
+wp_data

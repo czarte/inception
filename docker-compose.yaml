@@ -1,16 +1,21 @@
+version: '3'
 services:
   nginx:
     build:
       dockerfile: ./mandatory/nginx/Dockerfile
     volumes:
-      - ./:/var/run
+      - ./nginx_data:/var/run
+      - ./wp_data:/var/www/html
     networks:
       - inception-net
-    configs:
-      - http_config
-      - nginx_config
+    depends_on:
+      - wp
+    links:
+      - wp
+    env_file:
+      - .env
     ports:
-      - "4443:443"
+      - "443:443"
     restart: on-failure
 
   db:
@@ -20,6 +25,8 @@ services:
       dockerfile: ./mandatory/maria_db/Dockerfile
     ports:
       - "3306:3306"
+    env_file:
+      - .env
     environment:
       MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-rootpassword}
       MYSQL_DATABASE: ${DB_NAME:-wordpress}
@@ -27,8 +34,6 @@ services:
       MYSQL_PASSWORD: ${DB_PASSWORD:-wppassword}
     volumes:
       - ./mariadb_data:/var/lib/mysql
-    configs:
-      - mariadb_config
     restart: on-failure
 
   wp:
@@ -38,20 +43,17 @@ services:
       dockerfile: ./mandatory/wp/Dockerfile
     ports:
       - "9000:9000"
+    depends_on:
+      - db
     volumes:
       - ./wp_data:/var/www/html
-
-configs:
-  http_config:
-    file: ./mandatory/nginx/httpd-config
-  nginx_config:
-    file: ./mandatory/nginx/nginx-config
-  mariadb_config:
-    file: ./mandatory/maria_db/mariadb-config
+    env_file:
+      - .env
 
 volumes:
   mariadb_data:
     driver: local
 
 networks:
-  inception-net: {}
+  inception-net:
+    driver: bridge

@@ -1,0 +1,6 @@
+#!/bin/sh
+
+/usr/sbin/php-fpm8.3 -F
+
+gosu www-data wp core download --path=/var/www/html --locale=cs_CZ
+gosu www-data wp core install --url=$DOMAIN_NAME/ --title=$WP_TITLE --admin_user=$ADMIN_USER --admin_password=$ADMIN_PWD --admin_email=$ADMIN_EMAIL --skip-email

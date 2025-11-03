@@ -688,7 +688,7 @@ _main() {
 		mysql_check_config "$@"
 		# Load various environment variables
 		docker_setup_env "$@"
-		docker_create_db_directories
+		#docker_create_db_directories
 
 		# If container is started as root user, restart as dedicated mysql user
 		if [ "$(id -u)" = "0" ]; then
@@ -696,6 +696,14 @@ _main() {
 			exec gosu mysql "${BASH_SOURCE[0]}" "$@"
 		fi
 
+    if [ -z "$USER_ACCESS_GRANTED" ]; then
+      echo "GRANT ALL PRIVILEGES ON wordpress.* TO 'wpuser'@'%' ;" > /tmp/db1.sql
+      echo "FLUSH PRIVILEGES;" >> /tmp/db1.sql
+      mariadbd start
+      mariadb -u root --password=rootpassword < /tmp/db1.sql
+      mariadbd stop
+      export USER_ACCESS_GRANTED=yes
+    fi
 		# there's no database, so it needs to be initialized
 		if [ -z "$DATABASE_ALREADY_EXISTS" ]; then
 			docker_verify_minimum_env
