@@ -91,27 +91,9 @@ RUN set -ex; \
 VOLUME /var/lib/mysql
 
 COPY ./mandatory/maria_db/50-server.cnf /etc/mysql/mariadb.conf.d/
-COPY ./mandatory/maria_db/mariadb-entrypoint.sh /usr/local/bin/
-RUN ["chmod", "+x", "/usr/local/bin/mariadb-entrypoint.sh"]
-ENTRYPOINT ["/usr/local/bin/mariadb-entrypoint.sh"]
+COPY ./mandatory/maria_db/docker-entrypoint.sh /usr/local/bin/
+RUN ["chmod", "+x", "/usr/local/bin/docker-entrypoint.sh"]
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
 
 EXPOSE 3306
 CMD ["mariadbd"]
-#RUN apt update
-#RUN groupadd -r mysql && useradd -r -g mysql mysql --home-dir /var/lib/mysql
-#ENV GOSU_VERSION 1.17
-#ARG GPG_KEYS=177F4010FE56CA3336300305F1656F24C74CD1D8
-#RUN apt install systemd sudo gosu -y
-#RUN apt install mariadb-server -y
-#RUN mkdir /docker-entrypoint-initdb.d
-#RUN systemctl enable mariadb.service
-#RUN mkdir -p /var/run/entry
-#RUN echo 'mysql ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/mysql && \
-#    chmod 440 /etc/sudoers.d/mysql
-#COPY ./mandatory/maria_db/docker-entrypoint.sh /var/run/entry/docker-entrypoint.sh
-#RUN ["chmod", "+x", "/var/run/entry/docker-entrypoint.sh"]
-#RUN ["chown", "-R", "mysql:mysql", "/var/lib/mysql"]
-#ENTRYPOINT ["/var/run/entry/docker-entrypoint.sh"]
-#EXPOSE 3306
-#CMD ["mariadbd"]
-#    && sudo systemctl start mariadb.service

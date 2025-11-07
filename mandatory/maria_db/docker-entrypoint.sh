@@ -402,6 +402,10 @@ docker_setup_db() {
 				CREATE USER 'root'@'${MARIADB_ROOT_HOST}' IDENTIFIED BY '${rootPasswordEscaped}' ;
 				GRANT ALL ON *.* TO 'root'@'${MARIADB_ROOT_HOST}' WITH GRANT OPTION ;
 				GRANT PROXY ON ''@'%' TO 'root'@'${MARIADB_ROOT_HOST}' WITH GRANT OPTION;
+				CREATE DATABASE IF NOT EXISTS $DB_NAME ;
+        CREATE USER IF NOT EXISTS '$DB_USR'@'%' IDENTIFIED BY '$DB_PWD' ;
+        GRANT ALL PRIVILEGES ON wordpress.* TO 'wpuser'@'%' ;
+        FLUSH PRIVILEGES;
 			EOSQL
 		fi
 	fi
@@ -548,8 +552,8 @@ docker_mariadb_init()
 	if [ -n "${MARIADB_ROOT_PASSWORD_HASH}" ]; then
 		mysql_note "Setting root@localhost password hash"
 		docker_process_sql --dont-use-mysql-root-password --binary-mode <<-EOSQL
-			SET @@SESSION.SQL_LOG_BIN=0;
-			SET PASSWORD FOR 'root'@'localhost'= '${MARIADB_ROOT_PASSWORD_HASH}';
+      SET @@SESSION.SQL_LOG_BIN=0;
+      SET PASSWORD FOR 'root'@'localhost'= '${MARIADB_ROOT_PASSWORD_HASH}';
 		EOSQL
 	fi
 
@@ -684,6 +688,7 @@ _main() {
 	# skip setup if they aren't running mysqld or want an option that stops mysqld
 	if [ "$1" = 'mariadbd' ] || [ "$1" = 'mysqld' ] && ! _mysql_want_help "$@"; then
 		mysql_note "Entrypoint script for MariaDB Server ${MARIADB_VERSION} started."
+		mysql_note "MARIADB_ROOT_PASSWORD_HASH ${MARIADB_ROOT_PASSWORD_HASH}"
 
 		mysql_check_config "$@"
 		# Load various environment variables
@@ -696,14 +701,6 @@ _main() {
 			exec gosu mysql "${BASH_SOURCE[0]}" "$@"
 		fi
 
-    if [ -z "$USER_ACCESS_GRANTED" ]; then
-      echo "GRANT ALL PRIVILEGES ON wordpress.* TO 'wpuser'@'%' ;" > /tmp/db1.sql
-      echo "FLUSH PRIVILEGES;" >> /tmp/db1.sql
-      mariadbd start
-      mariadb -u root --password=rootpassword < /tmp/db1.sql
-      mariadbd stop
-      export USER_ACCESS_GRANTED=yes
-    fi
 		# there's no database, so it needs to be initialized
 		if [ -z "$DATABASE_ALREADY_EXISTS" ]; then
 			docker_verify_minimum_env

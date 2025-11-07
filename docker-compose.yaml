@@ -34,7 +34,7 @@ services:
       MYSQL_PASSWORD: ${DB_PASSWORD:-wppassword}
     volumes:
       - ./mariadb_data:/var/lib/mysql
-    restart: on-failure
+    restart: always
 
   wp:
     networks:
