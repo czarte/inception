@@ -2,7 +2,7 @@ FROM debian:oldstable
 
 RUN groupadd -r mysql && useradd -r -g mysql mysql --home-dir /var/lib/mysql
 ENV GOSU_VERSION 1.17
-ARG GPG_KEYS=177F4010FE56CA3336300305F1656F24C74CD1D8
+ARG GPG_KEYS="$GPGKEY"
 RUN set -eux; \
 	apt-get update; \
 	DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
@@ -65,9 +65,6 @@ RUN set -ex; \
 	apt-get update && apt-get install -y mariadb-server; \
 # postinst script creates a datadir, so avoid creating it by faking its existance.
 	mkdir -p /var/lib/mysql/mysql ; touch /var/lib/mysql/mysql/user.frm ; \
-# mariadb-backup is installed at the same time so that `mysql-common` is only installed once from just mariadb repos
-	#apt-get install -y --no-install-recommends mariadb-server="$MARIADB_VERSION" mariadb-backup socat \
-	#; \
 	rm -rf /var/lib/apt/lists/*; \
 # purge and re-create /var/lib/mysql with appropriate ownership
 	rm -rf /var/lib/mysql /etc/mysql/mariadb.conf.d/50-mysqld_safe.cnf; \
