@@ -2,7 +2,7 @@ FROM debian:oldstable
 
 RUN groupadd -r mysql && useradd -r -g mysql mysql --home-dir /var/lib/mysql
 ENV GOSU_VERSION 1.17
-ARG GPG_KEYS="$GPGKEY"
+ARG GPG_KEYS=177F4010FE56CA3336300305F1656F24C74CD1D8
 RUN set -eux; \
 	apt-get update; \
 	DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
@@ -87,8 +87,8 @@ RUN set -ex; \
 
 VOLUME /var/lib/mysql
 
-COPY ./mandatory/maria_db/50-server.cnf /etc/mysql/mariadb.conf.d/
-COPY ./mandatory/maria_db/docker-entrypoint.sh /usr/local/bin/
+COPY ./requirements/maria_db/50-server.cnf /etc/mysql/mariadb.conf.d/
+COPY ./requirements/maria_db/docker-entrypoint.sh /usr/local/bin/
 RUN ["chmod", "+x", "/usr/local/bin/docker-entrypoint.sh"]
 ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
 

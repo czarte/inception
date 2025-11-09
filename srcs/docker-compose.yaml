@@ -2,15 +2,13 @@ version: '3'
 services:
   nginx:
     build:
-      dockerfile: ./mandatory/nginx/Dockerfile
+      dockerfile: requirements/nginx/Dockerfile
     volumes:
       - ./nginx_data:/var/run
       - ./wp_data:/var/www/html
     networks:
       - inception-net
     depends_on:
-      - wp
-    links:
       - wp
     env_file:
       - .env
@@ -22,7 +20,7 @@ services:
     networks:
       - inception-net
     build:
-      dockerfile: ./mandatory/maria_db/Dockerfile
+      dockerfile: requirements/maria_db/Dockerfile
     ports:
       - "3306:3306"
     env_file:
@@ -35,7 +33,7 @@ services:
     networks:
       - inception-net
     build:
-      dockerfile: ./mandatory/wp/Dockerfile
+      dockerfile: requirements/wp/Dockerfile
     ports:
       - "9000:9000"
     depends_on:
