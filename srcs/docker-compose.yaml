@@ -5,7 +5,7 @@ services:
       dockerfile: requirements/nginx/Dockerfile
     volumes:
       - ./nginx_data:/var/run
-      - ./wp_data:/var/www/html
+      - ./wp_data:/var/www/public_html
     networks:
       - inception-net
     depends_on:
@@ -14,7 +14,7 @@ services:
       - .env
     ports:
       - "443:443"
-    restart: on-failure
+    restart: always
 
   db:
     networks:
@@ -39,9 +39,10 @@ services:
     depends_on:
       - db
     volumes:
-      - ./wp_data:/var/www/html
+      - ./wp_data:/var/www/public_html
     env_file:
       - .env
+    restart: always
 
 volumes:
   mariadb_data:

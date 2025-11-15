@@ -70,6 +70,7 @@ RUN set -ex; \
 	rm -rf /var/lib/mysql /etc/mysql/mariadb.conf.d/50-mysqld_safe.cnf; \
 	mkdir -p /var/lib/mysql /run/mysqld; \
 	chown -R mysql:mysql /var/lib/mysql /run/mysqld; \
+    chmod -R a+rw /var/lib/mysql; \
 # ensure that /run/mysqld (used for socket and lock files) is writable regardless of the UID our mysqld instance ends up having at runtime
 	chmod 1777 /run/mysqld; \
 # comment out a few problematic configuration values
@@ -90,6 +91,7 @@ VOLUME /var/lib/mysql
 COPY ./requirements/maria_db/50-server.cnf /etc/mysql/mariadb.conf.d/
 COPY ./requirements/maria_db/docker-entrypoint.sh /usr/local/bin/
 RUN ["chmod", "+x", "/usr/local/bin/docker-entrypoint.sh"]
+RUN ["chmod", "-R", "a+rwx", "/var/lib/mysql"]
 ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
 
 EXPOSE 3306
