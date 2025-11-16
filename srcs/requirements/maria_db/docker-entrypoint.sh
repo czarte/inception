@@ -204,8 +204,8 @@ docker_create_db_directories() {
 	# TODO other directories that are used by default? like /var/lib/mysql-files
 	# see https://github.com/docker-library/mysql/issues/562
 	mkdir -p "$DATADIR"
-	chown -R mysql:mysql "$DATADIR"
-	chown -R mysql:mysql /var/lib/mysql
+	MID=$(id)
+  mysql_warn "$MID"
 
 	if [ "$user" = "0" ]; then
 		# this will cause less disk access than `chown -R`
@@ -232,8 +232,8 @@ _mariadb_version() {
 # initializes the database directory
 docker_init_database_dir() {
 	mysql_note "Initializing database files"
-	chmod -R a+rwx /var/lib/mysql
-  LS=$(ls -la /var/lib)
+
+  LS=$(id)
   mysql_warn "$LS"
 	installArgs=( --datadir="$DATADIR" --rpm --auth-root-authentication-method=normal )
 	# "Other options are passed to mariadbd." (so we pass all "mariadbd" arguments directly here)
@@ -682,6 +682,9 @@ _main() {
 
 		# If container is started as root user, restart as dedicated mysql user
 		if [ "$(id -u)" = "0" ]; then
+		  chown -R mysql:mysql "$DATADIR"
+      chown -R mysql:mysql /var/lib/mysql
+      chown -R mysql:mysql /run/mysqld
 			mysql_note "Switching to dedicated user 'mysql'"
 			exec gosu mysql "${BASH_SOURCE[0]}" "$@"
 		fi
