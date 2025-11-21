@@ -1,11 +1,10 @@
-version: '3'
 services:
   nginx:
     build:
       dockerfile: requirements/nginx/Dockerfile
     volumes:
-      - ./nginx_data:/var/run
-      - ./wp_data:/var/www/public_html
+      - ../../data/nginx_data:/var/run
+      - ../../data/wp_data:/var/www/public_html
     networks:
       - inception-net
     depends_on:
@@ -26,7 +25,7 @@ services:
     env_file:
       - .env
     volumes:
-      - ./mariadb_data:/var/lib/mysql
+      - ../../data/mariadb_data:/var/lib/mysql
     restart: always
 
   wp:
@@ -39,7 +38,22 @@ services:
     depends_on:
       - db
     volumes:
-      - ./wp_data:/var/www/public_html
+      - ../../data/wp_data:/var/www/public_html
+    env_file:
+      - .env
+    restart: always
+
+  web:
+    networks:
+      - inception-net
+    build:
+      dockerfile: requirements/bonus/web/Dockerfile
+    ports:
+      - "7000:7000"
+    depends_on:
+      - db
+    volumes:
+      - ../../data/web_data:/var/www/public_html
     env_file:
       - .env
     restart: always

@@ -3,3 +3,5 @@ srcs/.env
 srcs/mariadb_data
 srcs/nginx_data
 srcs/wp_data
+srcs/requirements/bonus/web/node_modules
+srcs/requirements/bonus/web/dist
