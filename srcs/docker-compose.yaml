@@ -1,3 +1,4 @@
+version: "3"
 services:
   nginx:
     build:
@@ -39,21 +40,6 @@ services:
       - db
     volumes:
       - ../../data/wp_data:/var/www/public_html
-    env_file:
-      - .env
-    restart: always
-
-  web:
-    networks:
-      - inception-net
-    build:
-      dockerfile: requirements/bonus/web/Dockerfile
-    ports:
-      - "7000:7000"
-    depends_on:
-      - db
-    volumes:
-      - ../../data/web_data:/var/www/public_html
     env_file:
       - .env
     restart: always
