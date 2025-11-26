@@ -182,8 +182,15 @@ if ! _is_sourced; then
 	DATADIR="$(mysql_get_config 'datadir' "$@")"
 	SOCKET="$(mysql_get_config 'socket' "$@")"
 	PORT="$(mysql_get_config 'port' "$@")"
-	docker_temp_server_start
-  docker_setup_db
-  exec "$@"
+	if [! -f "/var/lib/mysql/mariadb_installed"]; then
+	  if [ ! -d "/var/lib/mysql/mysql" ]; then
+            mysql_install_db --user=mysql --datadir=/var/lib/mysql
+    fi
+	  docker_temp_server_start
+    docker_setup_db
+    touch "/var/lib/mysql/mariadb_installed"
+  fi
+  exec mysqld_safe
+  #exec "$@"
 #	_main "$@"
 fi
