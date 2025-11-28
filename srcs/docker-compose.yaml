@@ -20,7 +20,7 @@ services:
     networks:
       - inception-net
     build:
-      dockerfile: requirements/maria_db/Dockerfile
+      dockerfile: requirements/maria_db/newDockerfile
     ports:
       - "3306:3306"
     env_file:
